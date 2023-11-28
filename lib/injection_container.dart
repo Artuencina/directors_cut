@@ -63,4 +63,6 @@ Future<void> initializeDependencies() async {
         sl(),
         sl(),
       ));
+
+  sl.registerFactory<CurrentSceneBloc>(() => CurrentSceneBloc());
 }

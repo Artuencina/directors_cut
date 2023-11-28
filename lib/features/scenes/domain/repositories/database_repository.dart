@@ -1,7 +1,6 @@
 //Repositorio de proyectos
 
 import 'package:directors_cut/core/resources/data_state.dart';
-import 'package:directors_cut/features/scenes/domain/entities/annotation_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/project_entity.dart';
 

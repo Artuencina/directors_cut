@@ -99,8 +99,11 @@ _buildBody() {
                 ],
               ),
             )
-          : const Column(
-              children: [SceneNavigator()],
+          : BlocProvider(
+              create: (context) => CurrentSceneBloc(),
+              child: const Column(
+                children: [SceneNavigator()],
+              ),
             );
     }
 

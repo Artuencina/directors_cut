@@ -3,9 +3,7 @@
 //para navegar entre escenas, que desaparecen cuando se llega al final
 //o al principio de la lista de escenas
 
-import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
-import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_event.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,45 +20,47 @@ class _SceneNavigatorState extends State<SceneNavigator> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey.shade300,
-      child: BlocBuilder<LocalScenesBloc, LocalSceneState>(
+      //Leer la escena actual de su bloc
+      child: BlocBuilder<CurrentSceneBloc, CurrentSceneState>(
         builder: (context, state) {
-          if (state is LocalScenesDone) {
-            final scenes = state.scenes;
-            final currentScene = state.currentScene;
-            final index = scenes!.indexOf(currentScene!);
-
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (index != 0)
-                  IconButton(
-                    onPressed: () {
-                      context.read<LocalScenesBloc>().add(
-                            const ChangeToPreviousSceneEvent(),
-                          );
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                Text(
-                  currentScene.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //Boton para ir a la escena anterior
+              if (state.scene!.id! > 1)
+                IconButton(
+                  onPressed: () {
+                    //  context.read<CurrentSceneBloc>().add(
+                    //        PreviousSceneEvent(
+                    //          state.scene!.id! - 1,
+                    //        ),
+                    //      );
+                  },
+                  icon: const Icon(Icons.arrow_back_ios),
                 ),
-                if (index != scenes.length - 1)
-                  IconButton(
-                    onPressed: () {
-                      context.read<LocalScenesBloc>().add(
-                            const ChangeToNextSceneEvent(),
-                          );
-                    },
-                    icon: const Icon(Icons.arrow_forward),
-                  ),
-              ],
-            );
-          }
-          return const SizedBox.shrink();
+              //Titulo de la escena actual
+              Text(
+                state.scene!.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              //Boton para ir a la escena siguiente
+              if (state.scene!.id! <
+                  context.read<LocalScenesBloc>().state.scenes!.length)
+                IconButton(
+                  onPressed: () {
+                    //  context.read<CurrentSceneBloc>().add(
+                    //        NextSceneEvent(
+                    //          state.scene!.id! + 1,
+                    //        ),
+                    //      );
+                  },
+                  icon: const Icon(Icons.arrow_forward_ios),
+                ),
+            ],
+          );
         },
       ),
     );

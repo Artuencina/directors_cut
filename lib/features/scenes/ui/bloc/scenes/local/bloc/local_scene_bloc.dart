@@ -29,10 +29,6 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
     on<UpdateSceneEvent>(onUpdateScene);
     on<DeleteSceneEvent>(onDeleteScene);
     on<UpdateScenesEvent>(onUpdateScenes);
-    on<ChangeCurrentSceneEvent>(onChangeCurrentScene);
-    on<GetCurrentSceneEvent>(onGetCurrentScene);
-    on<ChangeToPreviousSceneEvent>(onChangeToPreviousScene);
-    on<ChangeToNextSceneEvent>(onChangeToNextScene);
   }
 
   void onGetScenes(
@@ -61,9 +57,10 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
 
     if (createdataState is DataSuccess) {
       //Si se crea la escena, volvemos a obtener las escenas
+
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
-      emit(LocalScenesDone(scenes: dataState.data!, currentScene: event.scene));
+      emit(LocalScenesDone(scenes: dataState.data!));
     }
 
     //Si falla, emitimos el estado de error
@@ -84,7 +81,7 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
       //Si se crea la escena, volvemos a obtener las escenas
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
-      emit(LocalScenesDone(scenes: dataState.data!, currentScene: event.scene));
+      emit(LocalScenesDone(scenes: dataState.data!));
     }
 
     //Si falla, emitimos el estado de error
@@ -104,8 +101,7 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
       //Si se crea la escena, volvemos a obtener las escenas
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
-      emit(LocalScenesDone(
-          scenes: dataState.data!, currentScene: dataState.data![0]));
+      emit(LocalScenesDone(scenes: dataState.data!));
     }
 
     //Si falla, emitimos el estado de error
@@ -125,8 +121,7 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
       //Si se crea la escena, volvemos a obtener las escenas
       final dataState =
           await getScenesUseCase(event.scenes[0].projectId.toString());
-      emit(LocalScenesDone(
-          scenes: dataState.data!, currentScene: dataState.data![0]));
+      emit(LocalScenesDone(scenes: dataState.data!));
     }
 
     //Si falla, emitimos el estado de error
@@ -134,41 +129,18 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
       emit(LocalScenesError(error: updatedataState.error!));
     }
   }
+}
+
+//Bloc para la escena actual
+class CurrentSceneBloc extends Bloc<CurrentSceneEvent, CurrentSceneState> {
+  CurrentSceneBloc() : super(const CurrentSceneLoading()) {
+    on<ChangeCurrentSceneEvent>(onChangeCurrentScene);
+  }
 
   void onChangeCurrentScene(
     ChangeCurrentSceneEvent event,
-    Emitter<LocalSceneState> emit,
+    Emitter<CurrentSceneState> emit,
   ) async {
-    emit(LocalScenesDone(scenes: state.scenes!, currentScene: event.scene));
-  }
-
-  void onGetCurrentScene(
-    GetCurrentSceneEvent event,
-    Emitter<LocalSceneState> emit,
-  ) async {
-    emit(LocalScenesDone(
-        scenes: state.scenes!, currentScene: state.currentScene));
-  }
-
-  void onChangeToPreviousScene(
-    ChangeToPreviousSceneEvent event,
-    Emitter<LocalSceneState> emit,
-  ) async {
-    final index = state.scenes!.indexOf(state.currentScene!);
-    if (index > 0) {
-      emit(LocalScenesDone(
-          scenes: state.scenes!, currentScene: state.scenes![index - 1]));
-    }
-  }
-
-  void onChangeToNextScene(
-    ChangeToNextSceneEvent event,
-    Emitter<LocalSceneState> emit,
-  ) async {
-    final index = state.scenes!.indexOf(state.currentScene!);
-    if (index < state.scenes!.length - 1) {
-      emit(LocalScenesDone(
-          scenes: state.scenes!, currentScene: state.scenes![index + 1]));
-    }
+    emit(CurrentSceneDone(scene: event.scene));
   }
 }

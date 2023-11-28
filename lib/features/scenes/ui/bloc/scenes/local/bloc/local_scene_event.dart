@@ -36,23 +36,14 @@ class DeleteSceneEvent extends LocalSceneEvent {
   final SceneEntity scene;
 }
 
-//Evento de cambiar escena actual
-class ChangeCurrentSceneEvent extends LocalSceneEvent {
+//Escena actual, sirve para navegar entre escenas
+//y obtener todas las anotaciones de la escena actual
+abstract class CurrentSceneEvent {
+  const CurrentSceneEvent();
+}
+
+//Evento de cambiar la escena actual
+class ChangeCurrentSceneEvent extends CurrentSceneEvent {
   const ChangeCurrentSceneEvent({required this.scene});
   final SceneEntity scene;
-}
-
-//Evento de obtener escena actual
-class GetCurrentSceneEvent extends LocalSceneEvent {
-  const GetCurrentSceneEvent();
-}
-
-//Evento de cambiar a escena anterior
-class ChangeToPreviousSceneEvent extends LocalSceneEvent {
-  const ChangeToPreviousSceneEvent();
-}
-
-//Evento de cambiar a escena siguiente
-class ChangeToNextSceneEvent extends LocalSceneEvent {
-  const ChangeToNextSceneEvent();
 }
