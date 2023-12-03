@@ -54,7 +54,7 @@ Future<void> initializeDependencies() async {
         sl(),
         sl(),
       ));
-
+  sl.registerFactory<CurrentSceneBloc>(() => CurrentSceneBloc());
   sl.registerFactory<LocalScenesBloc>(() => LocalScenesBloc(
         sl(),
         sl(),
@@ -63,6 +63,4 @@ Future<void> initializeDependencies() async {
         sl(),
         sl(),
       ));
-
-  sl.registerFactory<CurrentSceneBloc>(() => CurrentSceneBloc());
 }

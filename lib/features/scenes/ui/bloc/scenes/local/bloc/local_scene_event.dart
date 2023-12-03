@@ -47,3 +47,13 @@ class ChangeCurrentSceneEvent extends CurrentSceneEvent {
   const ChangeCurrentSceneEvent({required this.scene});
   final SceneEntity scene;
 }
+
+//Evento para cambiar a la escena siguiente
+class NextSceneEvent extends CurrentSceneEvent {
+  const NextSceneEvent();
+}
+
+//Evento para cambiar a la escena anterior
+class PreviousSceneEvent extends CurrentSceneEvent {
+  const PreviousSceneEvent();
+}

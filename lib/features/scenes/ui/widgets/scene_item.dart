@@ -39,6 +39,7 @@ class SceneItem extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge),
         onTap: () {
           //Abrir dialogo para cambiar el titulo de la escena
+          if (isEdit) return;
           showDialog(
             context: context,
             builder: (_) {
@@ -77,6 +78,7 @@ class SceneItem extends StatelessWidget {
         },
         onLongPress: () {
           //Mostrar opciones de eliminar, agregar escena antes y despues
+          if (isEdit) return;
           showModalBottomSheet(
             context: context,
             builder: (_) {

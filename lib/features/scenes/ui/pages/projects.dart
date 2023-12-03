@@ -5,6 +5,7 @@ import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_proje
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_state.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_event.dart';
+import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:directors_cut/features/scenes/ui/pages/scenes.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/show_project_form.dart';
 import 'package:directors_cut/injection_container.dart';
@@ -85,12 +86,35 @@ class ProjectScreen extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) {
-                                return BlocProvider<LocalScenesBloc>(
-                                  create: (context) => sl()
-                                    ..add(GetScenesEvent(
-                                        projectId: project.id.toString())),
-                                  child: SceneSceen(
-                                    idProyecto: project.id,
+                                //
+                                return MultiBlocProvider(
+                                  providers: [
+                                    //Providers para las escenas
+                                    BlocProvider<LocalScenesBloc>(
+                                      create: (context) => sl()
+                                        ..add(GetScenesEvent(
+                                            projectId: project.id.toString())),
+                                    ),
+                                    //Providers para la escena actual
+                                    BlocProvider<CurrentSceneBloc>(
+                                      create: (context) => sl(),
+                                    ),
+                                  ],
+                                  child: BlocListener<LocalScenesBloc,
+                                      LocalSceneState>(
+                                    listener: (context, state) {
+                                      if (state is LocalScenesDone) {
+                                        //Si hay escenas, establecer la primera como la escena actual
+                                        if (state.scenes!.isNotEmpty) {
+                                          context.read<CurrentSceneBloc>().add(
+                                              ChangeCurrentSceneEvent(
+                                                  scene: state.scenes![0]));
+                                        }
+                                      }
+                                    },
+                                    child: SceneSceen(
+                                      idProyecto: project.id,
+                                    ),
                                   ),
                                 );
                               },

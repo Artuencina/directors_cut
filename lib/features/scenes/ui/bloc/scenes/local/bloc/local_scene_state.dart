@@ -32,18 +32,13 @@ abstract class CurrentSceneState extends Equatable {
   const CurrentSceneState({this.scene});
 
   final SceneEntity? scene;
-
-  @override
-  List<Object> get props => [scene ?? ''];
-}
-
-//Para cuando se esta cargando la escena actual
-class CurrentSceneLoading extends CurrentSceneState {
-  const CurrentSceneLoading();
 }
 
 class CurrentSceneDone extends CurrentSceneState {
   const CurrentSceneDone({
     required SceneEntity? scene,
   }) : super(scene: scene);
+
+  @override
+  List<Object> get props => [scene ?? ''];
 }

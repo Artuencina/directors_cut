@@ -1,6 +1,8 @@
 //Bloc para escenas
 //Donde se maneja la escena actual y se obtienen las escenas de un proyecto
 
+import 'dart:ui';
+
 import 'package:directors_cut/core/resources/data_state.dart';
 import 'package:directors_cut/features/scenes/data/repositories/database_repository_impl.dart';
 import 'package:directors_cut/features/scenes/domain/usecases/scenes_usecases.dart';
@@ -17,13 +19,13 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
   final UpdateScenesUseCase updateScenesUseCase;
 
   LocalScenesBloc(
-      this.getScenesUseCase,
-      this.createSceneUseCase,
-      this.updateSceneUseCase,
-      this.deleteSceneUseCase,
-      this.updateScenesUseCase,
-      this.repository)
-      : super(const LocalScenesLoading()) {
+    this.getScenesUseCase,
+    this.createSceneUseCase,
+    this.updateSceneUseCase,
+    this.deleteSceneUseCase,
+    this.updateScenesUseCase,
+    this.repository,
+  ) : super(const LocalScenesLoading()) {
     on<GetScenesEvent>(onGetScenes);
     on<CreateSceneEvent>(onCreateScene);
     on<UpdateSceneEvent>(onUpdateScene);
@@ -101,6 +103,18 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
       //Si se crea la escena, volvemos a obtener las escenas
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
+
+      //Antes de emitir el estado vamos a actualizar el orden de las escenas
+      //para que no haya huecos en el orden
+      final scenes = dataState.data!;
+      for (var i = 0; i < scenes.length; i++) {
+        scenes[i].orderId = i + 1;
+      }
+
+      //Actualizamos las escenas
+      await updateScenesUseCase(scenes);
+
+      //Emitimos el estado
       emit(LocalScenesDone(scenes: dataState.data!));
     }
 
@@ -133,7 +147,9 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
 
 //Bloc para la escena actual
 class CurrentSceneBloc extends Bloc<CurrentSceneEvent, CurrentSceneState> {
-  CurrentSceneBloc() : super(const CurrentSceneLoading()) {
+  //Bloc de escenas para obtener la lista de escenas de un proyecto
+
+  CurrentSceneBloc() : super(const CurrentSceneDone(scene: null)) {
     on<ChangeCurrentSceneEvent>(onChangeCurrentScene);
   }
 

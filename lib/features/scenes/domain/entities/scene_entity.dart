@@ -1,6 +1,9 @@
 //Entidad para escenas que contiene anotaciones de musica y texto
+// ignore_for_file: must_be_immutable
+
 import 'package:directors_cut/core/constants/strings.dart';
 import 'package:directors_cut/features/scenes/domain/entities/project_entity.dart';
+import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 
 @Entity(
@@ -13,7 +16,7 @@ import 'package:floor/floor.dart';
     )
   ],
 )
-class SceneEntity {
+class SceneEntity extends Equatable {
   @PrimaryKey(autoGenerate: true)
   final int? id;
   final int? projectId;
@@ -27,6 +30,13 @@ class SceneEntity {
     required this.orderId,
   });
 
+  @override
+  List<Object?> get props => [
+        id,
+        projectId,
+        name,
+        orderId,
+      ];
   //Serializacion
   Map<String, dynamic> toJson() {
     return {

@@ -13,9 +13,11 @@ que al presionarlo muestra un dialogo para cambiar la escena actual
 
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
+import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_event.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/scene_navigator.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/show_list_scenes.dart';
+import 'package:directors_cut/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,7 +38,49 @@ class SceneSceen extends StatelessWidget {
 
     return Scaffold(
       appBar: _buildAppBar(context, tituloProyecto, idProyecto),
-      body: _buildBody(),
+      body: BlocBuilder<LocalScenesBloc, LocalSceneState>(builder: (_, state) {
+        if (state is LocalScenesLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is LocalScenesError) {
+          return const Center(
+            child: IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: null,
+            ),
+          );
+        }
+
+        if (state is LocalScenesDone) {
+          return state.scenes!.isEmpty
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('No hay escenas', style: TextStyle(fontSize: 20)),
+                      SizedBox(height: 20),
+                      //Mostrar el icono de agregar escena
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Pulsa en '),
+                          Icon(Icons.list),
+                          Text(' para agregar una escena')
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              : const Column(
+                  children: [SceneNavigator()],
+                );
+        }
+
+        return const Center(
+          child: Text('Error'),
+        );
+      }),
     );
   }
 }
@@ -62,53 +106,4 @@ _buildAppBar(BuildContext context, String? tituloProyecto, int? idProyecto) {
       ),
     ],
   );
-}
-
-_buildBody() {
-  return BlocBuilder<LocalScenesBloc, LocalSceneState>(builder: (_, state) {
-    if (state is LocalScenesLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state is LocalScenesError) {
-      return const Center(
-        child: IconButton(
-          icon: Icon(Icons.refresh),
-          onPressed: null,
-        ),
-      );
-    }
-
-    if (state is LocalScenesDone) {
-      return state.scenes!.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('No hay escenas', style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 20),
-                  //Mostrar el icono de agregar escena
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Pulsa en '),
-                      Icon(Icons.list),
-                      Text(' para agregar una escena')
-                    ],
-                  )
-                ],
-              ),
-            )
-          : BlocProvider(
-              create: (context) => CurrentSceneBloc(),
-              child: const Column(
-                children: [SceneNavigator()],
-              ),
-            );
-    }
-
-    return const Center(
-      child: Text('Error'),
-    );
-  });
 }

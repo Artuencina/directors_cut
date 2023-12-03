@@ -4,6 +4,7 @@
 //o al principio de la lista de escenas
 
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
+import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_event.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,44 +24,82 @@ class _SceneNavigatorState extends State<SceneNavigator> {
       //Leer la escena actual de su bloc
       child: BlocBuilder<CurrentSceneBloc, CurrentSceneState>(
         builder: (context, state) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //Boton para ir a la escena anterior
-              if (state.scene!.id! > 1)
-                IconButton(
-                  onPressed: () {
-                    //  context.read<CurrentSceneBloc>().add(
-                    //        PreviousSceneEvent(
-                    //          state.scene!.id! - 1,
-                    //        ),
-                    //      );
-                  },
-                  icon: const Icon(Icons.arrow_back_ios),
-                ),
-              //Titulo de la escena actual
-              Text(
-                state.scene!.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              //Boton para ir a la escena siguiente
-              if (state.scene!.id! <
-                  context.read<LocalScenesBloc>().state.scenes!.length)
-                IconButton(
-                  onPressed: () {
-                    //  context.read<CurrentSceneBloc>().add(
-                    //        NextSceneEvent(
-                    //          state.scene!.id! + 1,
-                    //        ),
-                    //      );
-                  },
-                  icon: const Icon(Icons.arrow_forward_ios),
-                ),
-            ],
-          );
+          //Si la escena es  null, mostrar un contenedor vacio
+          return state.scene == null
+              ? const SizedBox(
+                  height: 10,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //Boton para ir a la escena anterior
+
+                    IconButton(
+                      onPressed: state.scene!.orderId > 1
+                          ? () {
+                              //Buscar la escena anterior
+                              //Y cambiar la escena actual
+                              final scene = context
+                                  .read<LocalScenesBloc>()
+                                  .state
+                                  .scenes!
+                                  .firstWhere((element) =>
+                                      element.orderId ==
+                                      state.scene!.orderId - 1);
+
+                              context.read<CurrentSceneBloc>().add(
+                                    ChangeCurrentSceneEvent(
+                                      scene: scene,
+                                    ),
+                                  );
+                            }
+                          : null,
+                      icon: const Icon(Icons.arrow_back_ios),
+                    ),
+                    //Titulo de la escena actual
+                    Text(
+                      state.scene!.name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    //Boton para ir a la escena siguiente
+
+                    IconButton(
+                      onPressed: state.scene!.orderId <
+                              context
+                                  .read<LocalScenesBloc>()
+                                  .state
+                                  .scenes!
+                                  .length
+                          ? () {
+                              //Buscar la escena siguiente y cambiar la actual
+                              //A modo de debug vamos a obtener las escenas
+                              //de la lista de escenas del bloc
+                              final scenes =
+                                  context.read<LocalScenesBloc>().state.scenes!;
+
+                              final scene = context
+                                  .read<LocalScenesBloc>()
+                                  .state
+                                  .scenes!
+                                  .firstWhere((element) =>
+                                      element.orderId ==
+                                      state.scene!.orderId + 1);
+
+                              context.read<CurrentSceneBloc>().add(
+                                    ChangeCurrentSceneEvent(
+                                      scene: scene,
+                                    ),
+                                  );
+                            }
+                          : null,
+                      icon: const Icon(Icons.arrow_forward_ios),
+                    )
+                  ],
+                );
         },
       ),
     );
