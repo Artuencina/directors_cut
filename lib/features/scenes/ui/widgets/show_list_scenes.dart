@@ -130,7 +130,7 @@ class _ListScenesScreenState extends State<ListScenesScreen> {
                               onTap: () {
                                 //Agregar nueva escena
                                 final scene = SceneEntity(
-                                  name: 'Escena ${state.scenes!.length + 1}',
+                                  name: '',
                                   projectId: widget.idProyecto,
                                   orderId: state.scenes!.length + 1,
                                 );

@@ -35,8 +35,9 @@ class SceneItem extends StatelessWidget {
                 child: const Icon(Icons.drag_handle),
               )
             : null,
-        title: Text('[${scene.id}] ${scene.name} : ${scene.orderId}',
+        title: Text('Escena ${scene.orderId}',
             style: Theme.of(context).textTheme.titleLarge),
+        subtitle: scene.name.isNotEmpty ? Text(scene.name) : null,
         onTap: () {
           //Abrir dialogo para cambiar el titulo de la escena
           if (isEdit) return;
@@ -46,6 +47,8 @@ class SceneItem extends StatelessWidget {
               return AlertDialog(
                 title: const Text('Cambiar titulo'),
                 content: TextField(
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
                   controller: TextEditingController(text: nuevoTitulo),
                   onChanged: (value) {
                     nuevoTitulo = value;

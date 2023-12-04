@@ -29,75 +29,79 @@ class _SceneNavigatorState extends State<SceneNavigator> {
               ? const SizedBox(
                   height: 10,
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              : Wrap(
+                  runAlignment: WrapAlignment.center,
+                  alignment: WrapAlignment.center,
                   children: [
-                    //Boton para ir a la escena anterior
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        //Boton para ir a la escena anterior
 
-                    IconButton(
-                      onPressed: state.scene!.orderId > 1
-                          ? () {
-                              //Buscar la escena anterior
-                              //Y cambiar la escena actual
-                              final scene = context
-                                  .read<LocalScenesBloc>()
-                                  .state
-                                  .scenes!
-                                  .firstWhere((element) =>
-                                      element.orderId ==
-                                      state.scene!.orderId - 1);
+                        IconButton(
+                          onPressed: state.scene!.orderId > 1
+                              ? () {
+                                  //Buscar la escena anterior
+                                  //Y cambiar la escena actual
+                                  final scene = context
+                                      .read<LocalScenesBloc>()
+                                      .state
+                                      .scenes!
+                                      .firstWhere((element) =>
+                                          element.orderId ==
+                                          state.scene!.orderId - 1);
 
-                              context.read<CurrentSceneBloc>().add(
-                                    ChangeCurrentSceneEvent(
-                                      scene: scene,
-                                    ),
-                                  );
-                            }
-                          : null,
-                      icon: const Icon(Icons.arrow_back_ios),
+                                  context.read<CurrentSceneBloc>().add(
+                                        ChangeCurrentSceneEvent(
+                                          scene: scene,
+                                        ),
+                                      );
+                                }
+                              : null,
+                          icon: const Icon(Icons.arrow_back_ios),
+                        ),
+                        //Titulo de la escena actual
+                        Text(
+                          'Escena ${state.scene!.orderId}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        //Boton para ir a la escena siguiente
+
+                        IconButton(
+                          onPressed: state.scene!.orderId <
+                                  context
+                                      .read<LocalScenesBloc>()
+                                      .state
+                                      .scenes!
+                                      .length
+                              ? () {
+                                  //Buscar la escena siguiente y cambiar la actual
+
+                                  final scene = context
+                                      .read<LocalScenesBloc>()
+                                      .state
+                                      .scenes!
+                                      .firstWhere((element) =>
+                                          element.orderId ==
+                                          state.scene!.orderId + 1);
+
+                                  context.read<CurrentSceneBloc>().add(
+                                        ChangeCurrentSceneEvent(
+                                          scene: scene,
+                                        ),
+                                      );
+                                }
+                              : null,
+                          icon: const Icon(Icons.arrow_forward_ios),
+                        )
+                      ],
                     ),
-                    //Titulo de la escena actual
-                    Text(
-                      state.scene!.name,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    //Boton para ir a la escena siguiente
-
-                    IconButton(
-                      onPressed: state.scene!.orderId <
-                              context
-                                  .read<LocalScenesBloc>()
-                                  .state
-                                  .scenes!
-                                  .length
-                          ? () {
-                              //Buscar la escena siguiente y cambiar la actual
-                              //A modo de debug vamos a obtener las escenas
-                              //de la lista de escenas del bloc
-                              final scenes =
-                                  context.read<LocalScenesBloc>().state.scenes!;
-
-                              final scene = context
-                                  .read<LocalScenesBloc>()
-                                  .state
-                                  .scenes!
-                                  .firstWhere((element) =>
-                                      element.orderId ==
-                                      state.scene!.orderId + 1);
-
-                              context.read<CurrentSceneBloc>().add(
-                                    ChangeCurrentSceneEvent(
-                                      scene: scene,
-                                    ),
-                                  );
-                            }
-                          : null,
-                      icon: const Icon(Icons.arrow_forward_ios),
-                    )
+                    Text(state.scene!.name,
+                        style: Theme.of(context).textTheme.titleMedium),
                   ],
                 );
         },

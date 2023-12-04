@@ -82,6 +82,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                   child: Column(
                     children: [
                       TextFormField(
+                        autofocus: true,
                         textCapitalization: TextCapitalization.words,
                         controller: _titleController,
                         decoration: const InputDecoration(

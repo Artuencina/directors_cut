@@ -13,11 +13,9 @@ que al presionarlo muestra un dialogo para cambiar la escena actual
 
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
-import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_event.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/scene_navigator.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/show_list_scenes.dart';
-import 'package:directors_cut/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
