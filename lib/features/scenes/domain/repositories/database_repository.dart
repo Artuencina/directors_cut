@@ -1,6 +1,7 @@
 //Repositorio de proyectos
 
 import 'package:directors_cut/core/resources/data_state.dart';
+import 'package:directors_cut/features/scenes/domain/entities/annotation_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/project_entity.dart';
 
@@ -20,19 +21,11 @@ abstract class DatabaseRepository {
   Future<DataState<void>> updateScenes(List<SceneEntity> scenes);
   Future<DataState<void>> deleteScene(SceneEntity scene);
 
-  //Anotaciones de texto
-  // Future<List<TextAnnotationEntity>> getAnnotations(String sceneId);
-  // Future<TextAnnotationEntity?> getAnnotation(String id);
-  // Future<DataState<void>> createAnnotation(
-  //     TextAnnotationEntity annotation, String sceneId);
-  // Future<DataState<void>> updateAnnotation(TextAnnotationEntity annotation);
-  // Future<DataState<void>> deleteAnnotation(TextAnnotationEntity annotation);
-
-  // //Anotaciones de sonido
-  // Future<List<SongAnnotationEntity>> getSoundAnnotations(String sceneId);
-  // Future<SongAnnotationEntity?> getSoundAnnotation(String id);
-  // Future<DataState<void>> createSoundAnnotation(
-  //     SongAnnotationEntity annotation, String sceneId);
-  // Future<DataState<void>> updateSoundAnnotation(SongAnnotationEntity annotation);
-  // Future<DataState<void>> deleteSoundAnnotation(SongAnnotationEntity annotation);
+  //Anotaciones
+  Future<DataState<List<AnnotationEntity>>> getAnnotations(int sceneId);
+  Future<DataState<AnnotationEntity?>> getAnnotation(int id);
+  Future<DataState<void>> createAnnotation(AnnotationEntity annotation);
+  Future<DataState<void>> updateAnnotation(AnnotationEntity annotation);
+  Future<DataState<void>> updateAnnotations(List<AnnotationEntity> annotations);
+  Future<DataState<void>> deleteAnnotation(AnnotationEntity annotation);
 }

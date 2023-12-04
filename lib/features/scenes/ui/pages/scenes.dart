@@ -15,6 +15,7 @@ import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_proje
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/scene_navigator.dart';
+import 'package:directors_cut/features/scenes/ui/widgets/show_list_annotations.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/show_list_scenes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,13 @@ class SceneSceen extends StatelessWidget {
                   ),
                 )
               : const Column(
-                  children: [SceneNavigator()],
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SceneNavigator(),
+                    Expanded(
+                      child: AnnotationList(),
+                    )
+                  ],
                 );
         }
 

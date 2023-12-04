@@ -1,8 +1,6 @@
 //Bloc para escenas
 //Donde se maneja la escena actual y se obtienen las escenas de un proyecto
 
-import 'dart:ui';
-
 import 'package:directors_cut/core/resources/data_state.dart';
 import 'package:directors_cut/features/scenes/data/repositories/database_repository_impl.dart';
 import 'package:directors_cut/features/scenes/domain/usecases/scenes_usecases.dart';
@@ -149,8 +147,16 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
 class CurrentSceneBloc extends Bloc<CurrentSceneEvent, CurrentSceneState> {
   //Bloc de escenas para obtener la lista de escenas de un proyecto
 
-  CurrentSceneBloc() : super(const CurrentSceneDone(scene: null)) {
+  CurrentSceneBloc() : super(const CurrentSceneNone()) {
     on<ChangeCurrentSceneEvent>(onChangeCurrentScene);
+    on<EmptyCurrentSceneEvent>(onEmptyCurrentScene);
+  }
+
+  void onEmptyCurrentScene(
+    EmptyCurrentSceneEvent event,
+    Emitter<CurrentSceneState> emit,
+  ) async {
+    emit(const CurrentSceneNone());
   }
 
   void onChangeCurrentScene(

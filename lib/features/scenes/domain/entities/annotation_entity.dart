@@ -1,57 +1,107 @@
 //Entidad para una anotacion de una escena que puede ser
-//musica o texto
+//musica, texto o anotacion de iluminacion
+import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
+import 'package:floor/floor.dart';
+import 'package:directors_cut/core/constants/strings.dart';
+import 'package:equatable/equatable.dart';
 
-import 'package:flutter/material.dart';
-
-class Annotation {
-  final String id;
-  final IconData icon;
+@Entity(
+  tableName: annotationsTable,
+  foreignKeys: [
+    ForeignKey(
+      childColumns: ['sceneId'],
+      parentColumns: ['id'],
+      entity: SceneEntity,
+    )
+  ],
+)
+class AnnotationEntity extends Equatable {
+  @PrimaryKey(autoGenerate: true)
+  final int? id;
+  final int? sceneId;
   final String title;
-  final String description;
+  final String
+      description; //En texto e iluminacion se toma este campo como el texto
+  final int orderId;
+  final String? color; //Color de la anotacion, tambien se usa para iluminacion
 
-  const Annotation({
-    required this.id,
-    required this.icon,
+  //Musica
+  final String? url; //Url de la cancion
+  final int? songStart; //Entrada y salida de musica
+  final int? songEnd;
+  final String type; //Tipo de anotacion
+  final String? playType; //Tipo de reproduccion (loop, play_once)
+  final String? soundType; //Tipo de sonido (ambiente, efecto)
+  final int? volume; //Volumen de la cancion
+
+  const AnnotationEntity({
+    this.id,
+    required this.sceneId,
     required this.title,
     required this.description,
+    required this.orderId,
+    this.color,
+    this.url,
+    this.songStart,
+    this.songEnd,
+    required this.type,
+    this.playType,
+    this.soundType,
+    this.volume,
   });
-}
 
-class SongAnnotationEntity extends Annotation {
-  final String songId;
-
-  const SongAnnotationEntity({
-    required String id,
-    required IconData icon,
-    required String title,
-    required String description,
-    required this.songId,
-  }) : super(
-          id: id,
-          icon: icon,
-          title: title,
-          description: description,
-        );
+  @override
+  List<Object?> get props => [
+        id,
+        sceneId,
+        title,
+        description,
+        orderId,
+        color,
+        url,
+        songStart,
+        songEnd,
+        type,
+        playType,
+        soundType,
+        volume,
+      ];
 
   //Serializacion
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'icon': icon,
+      'sceneId': sceneId,
       'title': title,
       'description': description,
-      'songId': songId,
+      'orderId': orderId,
+      'color': color,
+      'url': url,
+      'songStart': songStart,
+      'songEnd': songEnd,
+      'type': type,
+      'playType': playType,
+      'soundType': soundType,
+      'volume': volume,
     };
   }
 
   //Deserializacion
-  factory SongAnnotationEntity.fromJson(Map<String, dynamic> json) {
-    return SongAnnotationEntity(
-      id: json['id'] as String,
-      icon: json['icon'] as IconData,
+  factory AnnotationEntity.fromJson(Map<String, dynamic> json) {
+    return AnnotationEntity(
+      id: json['id'] as int,
+      sceneId: json['sceneId'] as int,
       title: json['title'] as String,
       description: json['description'] as String,
-      songId: json['songId'] as String,
+      orderId: json['orderId'] as int,
+      color: json['color'] as String?,
+      url: json['url'] as String?,
+      songStart: json['songStart'] as int?,
+      songEnd: json['songEnd'] as int?,
+      type: json['type'] as String,
+      playType: json['playType'] as String?,
+      soundType: json['soundType'] as String?,
+      volume: json['volume'] as int?,
     );
   }
 
@@ -59,54 +109,18 @@ class SongAnnotationEntity extends Annotation {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'icon': icon,
+      'sceneId': sceneId,
       'title': title,
       'description': description,
-      'songId': songId,
-    };
-  }
-}
-
-class TextAnnotationEntity extends Annotation {
-  const TextAnnotationEntity({
-    required String id,
-    required IconData icon,
-    required String title,
-    required String description,
-  }) : super(
-          id: id,
-          icon: icon,
-          title: title,
-          description: description,
-        );
-
-  //Serializacion
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'icon': icon,
-      'title': title,
-      'description': description,
-    };
-  }
-
-  //Deserializacion
-  factory TextAnnotationEntity.fromJson(Map<String, dynamic> json) {
-    return TextAnnotationEntity(
-      id: json['id'] as String,
-      icon: json['icon'] as IconData,
-      title: json['title'] as String,
-      description: json['description'] as String,
-    );
-  }
-
-  //ToMap
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'icon': icon,
-      'title': title,
-      'description': description,
+      'orderId': orderId,
+      'color': color,
+      'url': url,
+      'songStart': songStart,
+      'songEnd': songEnd,
+      'type': type,
+      'playType': playType,
+      'soundType': soundType,
+      'volume': volume,
     };
   }
 }

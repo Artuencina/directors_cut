@@ -1,5 +1,6 @@
 //Vista de los projectos en grid view
 
+import 'package:directors_cut/features/scenes/ui/bloc/annotations/local/bloc/annotation_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_event.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_state.dart';
@@ -99,6 +100,10 @@ class ProjectScreen extends StatelessWidget {
                                     BlocProvider<CurrentSceneBloc>(
                                       create: (context) => sl(),
                                     ),
+                                    //Provider de anotaciones
+                                    BlocProvider<AnnotationBloc>(
+                                      create: (context) => sl(),
+                                    ),
                                   ],
                                   child: BlocListener<LocalScenesBloc,
                                       LocalSceneState>(
@@ -109,6 +114,12 @@ class ProjectScreen extends StatelessWidget {
                                           context.read<CurrentSceneBloc>().add(
                                               ChangeCurrentSceneEvent(
                                                   scene: state.scenes![0]));
+
+                                          //Obtener las anotaciones de la escena
+                                          context.read<AnnotationBloc>().add(
+                                              GetAnnotationsEvent(
+                                                  sceneId:
+                                                      state.scenes![0].id!));
                                         }
                                       }
                                     },

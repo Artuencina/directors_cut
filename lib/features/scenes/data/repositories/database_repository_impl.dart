@@ -2,6 +2,7 @@
 //Para manejar los proyectos y escenas se utilizara floor
 import 'package:directors_cut/core/resources/data_state.dart';
 import 'package:directors_cut/features/scenes/data/datasources/local/app_database.dart';
+import 'package:directors_cut/features/scenes/domain/entities/annotation_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/project_entity.dart';
 import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
 import 'package:directors_cut/features/scenes/domain/repositories/database_repository.dart';
@@ -124,55 +125,68 @@ class DatabaseRepositoryImpl implements DatabaseRepository {
     }
   }
 
-  // @override
-  // Future<void> createAnnotation(
-  //     TextAnnotationEntity annotation, String sceneId) async {
-  //   await _database.annotationDao.createAnnotation(annotation, sceneId);
-  // }
+  //Annotation
+  @override
+  Future<DataState<void>> createAnnotation(AnnotationEntity annotation) async {
+    try {
+      await _database.annotationDao.createAnnotation(annotation);
+      return const DataSuccess<void>(null);
+    } catch (e) {
+      return DataFailed<void>(e as Exception);
+    }
+  }
 
-  // @override
-  // Future<void> deleteAnnotation(TextAnnotationEntity annotation) async {
-  //   await _database.annotationDao.deleteAnnotation(annotation);
-  // }
+  @override
+  Future<DataState<void>> deleteAnnotation(AnnotationEntity annotation) async {
+    try {
+      await _database.annotationDao.deleteAnnotation(annotation);
+      return const DataSuccess<void>(null);
+    } catch (e) {
+      return DataFailed<void>(e as Exception);
+    }
+  }
 
-  // @override
-  // Future<TextAnnotationEntity?> getAnnotation(String id) async {
-  //   return await _database.annotationDao.getAnnotation(id);
-  // }
+  @override
+  Future<DataState<AnnotationEntity?>> getAnnotation(int id) async {
+    try {
+      final annotation = await _database.annotationDao.getAnnotation(id);
+      return DataSuccess<AnnotationEntity?>(annotation);
+    } catch (e) {
+      return DataFailed(e as Exception);
+    }
+  }
 
-  // @override
-  // Future<List<TextAnnotationEntity>> getAnnotations(String sceneId) async {
-  //   return await _database.annotationDao.getAnnotations(sceneId);
-  // }
+  @override
+  Future<DataState<List<AnnotationEntity>>> getAnnotations(int sceneId) async {
+    try {
+      final annotations = await _database.annotationDao.getAnnotations(sceneId);
 
-  // @override
-  // Future<void> updateAnnotation(TextAnnotationEntity annotation) async {
-  //   await _database.annotationDao.updateAnnotation(annotation);
-  // }
+      //Ordenar por orderId
+      annotations.sort((a, b) => a.orderId.compareTo(b.orderId));
+      return DataSuccess<List<AnnotationEntity>>(annotations);
+    } catch (e) {
+      return DataFailed(e as Exception);
+    }
+  }
 
-  // @override
-  // Future<void> createSoundAnnotation(
-  //     SongAnnotationEntity annotation, String sceneId) async {
-  //   await _database.songAnnotationDao.createSoundAnnotation(annotation, sceneId);
-  // }
+  @override
+  Future<DataState<void>> updateAnnotation(AnnotationEntity annotation) async {
+    try {
+      await _database.annotationDao.updateAnnotation(annotation);
+      return const DataSuccess<void>(null);
+    } catch (e) {
+      return DataFailed<void>(e as Exception);
+    }
+  }
 
-  // @override
-  // Future<void> deleteSoundAnnotation(SongAnnotationEntity annotation) async {
-  //   await _database.songAnnotationDao.deleteSoundAnnotation(annotation);
-  // }
-
-  // @override
-  // Future<SongAnnotationEntity?> getSoundAnnotation(String id) async {
-  //   return await _database.songAnnotationDao.getSoundAnnotation(id);
-  // }
-
-  // @override
-  // Future<List<SongAnnotationEntity>> getSoundAnnotations(String sceneId) async {
-  //   return await _database.songAnnotationDao.getSoundAnnotations(sceneId);
-  // }
-
-  // @override
-  // Future<void> updateSoundAnnotation(SongAnnotationEntity annotation) async {
-  //   await _database.songAnnotationDao.updateSoundAnnotation(annotation);
-  // }
+  @override
+  Future<DataState<void>> updateAnnotations(
+      List<AnnotationEntity> annotations) async {
+    try {
+      await _database.annotationDao.updateAnnotations(annotations);
+      return const DataSuccess<void>(null);
+    } catch (e) {
+      return DataFailed<void>(e as Exception);
+    }
+  }
 }

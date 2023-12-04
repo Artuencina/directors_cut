@@ -32,13 +32,17 @@ abstract class CurrentSceneState extends Equatable {
   const CurrentSceneState({this.scene});
 
   final SceneEntity? scene;
+
+  @override
+  List<Object> get props => [scene ?? ''];
 }
 
 class CurrentSceneDone extends CurrentSceneState {
   const CurrentSceneDone({
     required SceneEntity? scene,
   }) : super(scene: scene);
+}
 
-  @override
-  List<Object> get props => [scene ?? ''];
+class CurrentSceneNone extends CurrentSceneState {
+  const CurrentSceneNone();
 }

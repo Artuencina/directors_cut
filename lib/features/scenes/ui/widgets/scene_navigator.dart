@@ -25,7 +25,7 @@ class _SceneNavigatorState extends State<SceneNavigator> {
       child: BlocBuilder<CurrentSceneBloc, CurrentSceneState>(
         builder: (context, state) {
           //Si la escena es  null, mostrar un contenedor vacio
-          return state.scene == null
+          return (state is CurrentSceneNone || state.scene == null)
               ? const SizedBox(
                   height: 10,
                 )

@@ -65,13 +65,15 @@ class _$AppDatabase extends AppDatabase {
 
   SceneDao? _sceneDaoInstance;
 
+  AnnotationDao? _annotationDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -90,6 +92,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `projects` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `description` TEXT NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `scenes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `projectId` INTEGER, `name` TEXT NOT NULL, `orderId` INTEGER NOT NULL, FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `annotations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sceneId` INTEGER, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `orderId` INTEGER NOT NULL, `color` TEXT, `url` TEXT, `songStart` INTEGER, `songEnd` INTEGER, `type` TEXT NOT NULL, `playType` TEXT, `soundType` TEXT, `volume` INTEGER, FOREIGN KEY (`sceneId`) REFERENCES `scenes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -105,6 +109,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   SceneDao get sceneDao {
     return _sceneDaoInstance ??= _$SceneDao(database, changeListener);
+  }
+
+  @override
+  AnnotationDao get annotationDao {
+    return _annotationDaoInstance ??= _$AnnotationDao(database, changeListener);
   }
 }
 
@@ -276,5 +285,144 @@ class _$SceneDao extends SceneDao {
   @override
   Future<void> deleteScene(SceneEntity scene) async {
     await _sceneEntityDeletionAdapter.delete(scene);
+  }
+}
+
+class _$AnnotationDao extends AnnotationDao {
+  _$AnnotationDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _annotationEntityInsertionAdapter = InsertionAdapter(
+            database,
+            'annotations',
+            (AnnotationEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'sceneId': item.sceneId,
+                  'title': item.title,
+                  'description': item.description,
+                  'orderId': item.orderId,
+                  'color': item.color,
+                  'url': item.url,
+                  'songStart': item.songStart,
+                  'songEnd': item.songEnd,
+                  'type': item.type,
+                  'playType': item.playType,
+                  'soundType': item.soundType,
+                  'volume': item.volume
+                }),
+        _annotationEntityUpdateAdapter = UpdateAdapter(
+            database,
+            'annotations',
+            ['id'],
+            (AnnotationEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'sceneId': item.sceneId,
+                  'title': item.title,
+                  'description': item.description,
+                  'orderId': item.orderId,
+                  'color': item.color,
+                  'url': item.url,
+                  'songStart': item.songStart,
+                  'songEnd': item.songEnd,
+                  'type': item.type,
+                  'playType': item.playType,
+                  'soundType': item.soundType,
+                  'volume': item.volume
+                }),
+        _annotationEntityDeletionAdapter = DeletionAdapter(
+            database,
+            'annotations',
+            ['id'],
+            (AnnotationEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'sceneId': item.sceneId,
+                  'title': item.title,
+                  'description': item.description,
+                  'orderId': item.orderId,
+                  'color': item.color,
+                  'url': item.url,
+                  'songStart': item.songStart,
+                  'songEnd': item.songEnd,
+                  'type': item.type,
+                  'playType': item.playType,
+                  'soundType': item.soundType,
+                  'volume': item.volume
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<AnnotationEntity> _annotationEntityInsertionAdapter;
+
+  final UpdateAdapter<AnnotationEntity> _annotationEntityUpdateAdapter;
+
+  final DeletionAdapter<AnnotationEntity> _annotationEntityDeletionAdapter;
+
+  @override
+  Future<List<AnnotationEntity>> getAnnotations(int sceneId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM annotations where sceneId = ?1',
+        mapper: (Map<String, Object?> row) => AnnotationEntity(
+            id: row['id'] as int?,
+            sceneId: row['sceneId'] as int?,
+            title: row['title'] as String,
+            description: row['description'] as String,
+            orderId: row['orderId'] as int,
+            color: row['color'] as String?,
+            url: row['url'] as String?,
+            songStart: row['songStart'] as int?,
+            songEnd: row['songEnd'] as int?,
+            type: row['type'] as String,
+            playType: row['playType'] as String?,
+            soundType: row['soundType'] as String?,
+            volume: row['volume'] as int?),
+        arguments: [sceneId]);
+  }
+
+  @override
+  Future<AnnotationEntity?> getAnnotation(int id) async {
+    return _queryAdapter.query('SELECT * FROM annotations WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => AnnotationEntity(
+            id: row['id'] as int?,
+            sceneId: row['sceneId'] as int?,
+            title: row['title'] as String,
+            description: row['description'] as String,
+            orderId: row['orderId'] as int,
+            color: row['color'] as String?,
+            url: row['url'] as String?,
+            songStart: row['songStart'] as int?,
+            songEnd: row['songEnd'] as int?,
+            type: row['type'] as String,
+            playType: row['playType'] as String?,
+            soundType: row['soundType'] as String?,
+            volume: row['volume'] as int?),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> createAnnotation(AnnotationEntity annotation) async {
+    await _annotationEntityInsertionAdapter.insert(
+        annotation, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateAnnotation(AnnotationEntity annotation) async {
+    await _annotationEntityUpdateAdapter.update(
+        annotation, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateAnnotations(List<AnnotationEntity> annotations) async {
+    await _annotationEntityUpdateAdapter.updateList(
+        annotations, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteAnnotation(AnnotationEntity annotation) async {
+    await _annotationEntityDeletionAdapter.delete(annotation);
   }
 }

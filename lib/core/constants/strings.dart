@@ -6,5 +6,5 @@ const String defaultApiKey = '';
 const String databaseName = 'directors_cut.db';
 const String projectsTable = 'projects';
 const String scenesTable = 'scenes';
-const String songsTable = 'songs';
+const String songsTable = 'songs'; //Para ver las canciones descargadas
 const String annotationsTable = 'annotations';
