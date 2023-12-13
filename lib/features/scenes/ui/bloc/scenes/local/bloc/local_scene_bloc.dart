@@ -98,7 +98,7 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
     final deletedataState = await deleteSceneUseCase(event.scene);
 
     if (deletedataState is DataSuccess) {
-      //Si se crea la escena, volvemos a obtener las escenas
+      //Si se elimina la escena, volvemos a obtener las escenas
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
 

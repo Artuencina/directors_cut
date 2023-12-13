@@ -26,10 +26,11 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
     this.repository,
   ) : super(const AnnotationLoading()) {
     on<ChangeAnnotationsEvent>(onChangeAnnotations);
-    on<CreateAnnotationEvent>(onAddAnnotation);
+    on<CreateAnnotationEvent>(onCreateAnnotation);
     on<UpdateAnnotationEvent>(onUpdateAnnotation);
     on<DeleteAnnotationEvent>(onDeleteAnnotation);
     on<UpdateAnnotationsEvent>(onUpdateAnnotations);
+    on<ReorderAnnotationsEvent>(onReorderAnnotations);
     on<GetAnnotationsEvent>(onGetAnnotations);
     on<ClearAnnotationsEvent>(onClearAnnotations);
   }
@@ -57,7 +58,7 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
 
   void onUpdateAnnotations(
       UpdateAnnotationsEvent event, Emitter<AnnotationState> emit) async {
-    emit(const AnnotationLoading());
+    //emit(const AnnotationLoading());
     final dataState = await updateAnnotationsUseCase(event.annotations);
 
     if (dataState is DataSuccess) {
@@ -74,11 +75,23 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
 
   void onDeleteAnnotation(
       DeleteAnnotationEvent event, Emitter<AnnotationState> emit) async {
-    emit(const AnnotationLoading());
+    //emit(const AnnotationLoading());
     final dataState = await deleteAnnotationUseCase(event.annotation);
 
     if (dataState is DataSuccess) {
+      //Si se elimina una anotacion volvemos a obtener las anotaciones
       final dataState = await getAnnotationsUseCase(event.annotation.sceneId!);
+
+      //Antes de emitir el estado, vamos a actualizar el orderId de las anotaciones
+      //para que no haya huecos en el orden
+      final annotations = dataState.data!;
+      for (var i = 0; i < annotations.length; i++) {
+        annotations[i].orderId = i + 1;
+      }
+
+      //Actualizamos las anotaciones
+      await updateAnnotationsUseCase(annotations);
+
       emit(AnnotationDone(annotations: dataState.data!));
     }
 
@@ -90,7 +103,7 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
 
   void onUpdateAnnotation(
       UpdateAnnotationEvent event, Emitter<AnnotationState> emit) async {
-    emit(const AnnotationLoading());
+    //emit(const AnnotationLoading());
     final dataState = await updateAnnotationUseCase(event.annotation);
 
     if (dataState is DataSuccess) {
@@ -104,10 +117,32 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
     }
   }
 
-  void onAddAnnotation(
+  void onReorderAnnotations(
+      ReorderAnnotationsEvent event, Emitter<AnnotationState> emit) async {
+    //emit(const AnnotationLoading());
+    //Obtener las anotaciones
+    List<AnnotationEntity> annotations = event.annotations;
+
+    final annotation = annotations[event.oldIndex];
+    annotations.removeAt(event.oldIndex);
+    annotations.insert(event.newIndex, annotation);
+
+    //Actualizamos el orderId de las anotaciones
+    for (var i = 0; i < annotations.length; i++) {
+      annotations[i].orderId = i + 1;
+    }
+
+    //Actualizamos las anotaciones
+    await updateAnnotationsUseCase(annotations);
+
+    emit(AnnotationDone(annotations: annotations));
+  }
+
+  void onCreateAnnotation(
       CreateAnnotationEvent event, Emitter<AnnotationState> emit) async {
     //Antes de crear la escena, emitimos el estado de cargando
-    emit(const AnnotationLoading());
+    //emit(const AnnotationLoading());
+
     final createdataState = await createAnnotationUseCase(event.annotation);
 
     if (createdataState is DataSuccess) {

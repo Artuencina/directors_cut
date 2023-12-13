@@ -6,7 +6,6 @@ import 'package:directors_cut/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sqflite/sqflite.dart';
 //import 'package:sqflite/sqflite.dart';
 
 //Temas

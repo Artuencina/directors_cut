@@ -30,6 +30,17 @@ class UpdateAnnotationsEvent extends AnnotationEvent {
   final List<AnnotationEntity> annotations;
 }
 
+//Evento de reordenar anotaciones
+class ReorderAnnotationsEvent extends AnnotationEvent {
+  const ReorderAnnotationsEvent(
+      {required this.annotations,
+      required this.oldIndex,
+      required this.newIndex});
+  final List<AnnotationEntity> annotations;
+  final int oldIndex;
+  final int newIndex;
+}
+
 //Evento de eliminar anotación
 class DeleteAnnotationEvent extends AnnotationEvent {
   const DeleteAnnotationEvent({required this.annotation});

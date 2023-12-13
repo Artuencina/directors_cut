@@ -13,7 +13,7 @@ abstract class LocalProjectState extends Equatable {
   final Exception? error;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [projects ?? [], error ?? []];
 }
 
 class LocalProjectsLoading extends LocalProjectState {

@@ -162,7 +162,7 @@ class DatabaseRepositoryImpl implements DatabaseRepository {
       final annotations = await _database.annotationDao.getAnnotations(sceneId);
 
       //Ordenar por orderId
-      annotations.sort((a, b) => a.orderId.compareTo(b.orderId));
+      annotations.sort((a, b) => a.orderId!.compareTo(b.orderId!));
       return DataSuccess<List<AnnotationEntity>>(annotations);
     } catch (e) {
       return DataFailed(e as Exception);

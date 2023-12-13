@@ -12,7 +12,7 @@ abstract class AnnotationState extends Equatable {
   final Exception? error;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [annotations ?? [], error ?? []];
 }
 
 class AnnotationLoading extends AnnotationState {

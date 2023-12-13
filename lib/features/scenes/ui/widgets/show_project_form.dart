@@ -115,9 +115,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                           if (_formKey.currentState!.validate()) {
                             //Guardar proyecto
                             final project = ProjectEntity(
-                              id: widget.project == null
-                                  ? null
-                                  : widget.project!.id,
+                              id: widget.project?.id,
                               name: _titleController.text,
                               description: _descriptionController.text,
                             );

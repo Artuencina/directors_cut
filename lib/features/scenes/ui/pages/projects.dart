@@ -100,7 +100,7 @@ class ProjectScreen extends StatelessWidget {
                                     BlocProvider<CurrentSceneBloc>(
                                       create: (context) => sl(),
                                     ),
-                                    //Provider de anotaciones
+                                    //Provider de annotationbloc
                                     BlocProvider<AnnotationBloc>(
                                       create: (context) => sl(),
                                     ),

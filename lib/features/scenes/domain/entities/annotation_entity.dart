@@ -1,5 +1,7 @@
 //Entidad para una anotacion de una escena que puede ser
 //musica, texto o anotacion de iluminacion
+// ignore_for_file: must_be_immutable
+
 import 'package:directors_cut/features/scenes/domain/entities/scene_entity.dart';
 import 'package:floor/floor.dart';
 import 'package:directors_cut/core/constants/strings.dart';
@@ -19,27 +21,27 @@ class AnnotationEntity extends Equatable {
   @PrimaryKey(autoGenerate: true)
   final int? id;
   final int? sceneId;
-  final String title;
-  final String
-      description; //En texto e iluminacion se toma este campo como el texto
-  final int orderId;
-  final String? color; //Color de la anotacion, tambien se usa para iluminacion
+  String title;
+  String description; //En texto e iluminacion se toma este campo como el texto
+  final String type; //Tipo de anotacion (texto, musica, iluminacion)
+  int? orderId;
+  String? color; //Color de la anotacion, tambien se usa para iluminacion
 
   //Musica
-  final String? url; //Url de la cancion
-  final int? songStart; //Entrada y salida de musica
-  final int? songEnd;
-  final String type; //Tipo de anotacion
-  final String? playType; //Tipo de reproduccion (loop, play_once)
-  final String? soundType; //Tipo de sonido (ambiente, efecto)
-  final int? volume; //Volumen de la cancion
+  String? url; //Url de la cancion
+  int? songStart; //Entrada y salida de musica
+  int? songEnd;
 
-  const AnnotationEntity({
+  String? playType; //Tipo de reproduccion (loop, play_once)
+  String? soundType; //Tipo de sonido (ambiente, efecto)
+  int? volume; //Volumen de la cancion
+
+  AnnotationEntity({
     this.id,
     required this.sceneId,
     required this.title,
     required this.description,
-    required this.orderId,
+    this.orderId,
     this.color,
     this.url,
     this.songStart,

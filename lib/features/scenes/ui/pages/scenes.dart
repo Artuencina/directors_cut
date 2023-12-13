@@ -94,6 +94,7 @@ _buildAppBar(BuildContext context, String? tituloProyecto, int? idProyecto) {
   return AppBar(
     title: Text(tituloProyecto ?? 'Sin titulo'),
     actions: [
+      const SizedBox(width: 10),
       IconButton(
         onPressed: () {
           //Abrir pagina para ver todas las escenas
