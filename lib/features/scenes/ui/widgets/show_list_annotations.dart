@@ -9,6 +9,7 @@ import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_sc
 import 'package:directors_cut/features/scenes/ui/widgets/annotation_item.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/lighting_annotation_form.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/song_annotation_form.dart';
+import 'package:directors_cut/features/scenes/ui/widgets/song_annotation_item.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/text_annotation_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,10 +62,13 @@ class _AnnotationListState extends State<AnnotationList> {
             itemCount: state.annotations!.length,
             itemBuilder: (context, index) {
               final annotation = state.annotations![index];
-              return AnnotationItem(
-                key: ValueKey(annotation.id),
-                annotation: annotation,
-              );
+              return annotation.type == 'music'
+                  ? SongAnnotationItem(
+                      key: ValueKey(annotation.id),
+                      annotation: annotation,
+                    )
+                  : AnnotationItem(
+                      key: ValueKey(annotation.id), annotation: annotation);
             },
             footer: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

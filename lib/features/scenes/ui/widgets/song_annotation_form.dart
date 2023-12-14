@@ -44,6 +44,20 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
   int _volume = 50;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.annotation != null) {
+      _titleController.text = widget.annotation!.title;
+      _descriptionController.text = widget.annotation!.description;
+      _selectedColor = Color(int.parse(widget.annotation!.color!));
+      _url = widget.annotation!.url;
+      _loop = widget.annotation!.playType == 'loop';
+      _ambient = widget.annotation!.soundType == 'ambient';
+      _volume = widget.annotation!.volume!;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
@@ -164,23 +178,6 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
 
               const SizedBox(height: 20),
 
-              //Tipo de reproduccion (loop, play_once)
-              Row(
-                children: [
-                  const Text('Reproducir en loop'),
-                  const SizedBox(width: 20),
-                  Switch(
-                    value: _loop,
-                    onChanged: (value) {
-                      setState(() {
-                        _loop = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
               //Tipo de sonido (ambiente, efecto)
               Row(
                 children: [
@@ -237,6 +234,10 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
                       description: _descriptionController.text,
                       type: 'music',
                       color: _selectedColor.value.toString(),
+                      url: _url,
+                      soundType: _ambient ? 'ambient' : 'effect',
+                      playType: _loop ? 'loop' : 'play_once',
+                      volume: _volume,
                     );
                     //Para agregar al bloc
                     Navigator.of(context).pop(annotation);

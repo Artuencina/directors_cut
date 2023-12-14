@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 const String appTitle = 'Directors Cut';
 
 const String baseUrl = '';

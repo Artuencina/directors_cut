@@ -52,7 +52,7 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
     Emitter<LocalSceneState> emit,
   ) async {
     //Antes de crear la escena, emitimos el estado de cargando
-    emit(const LocalScenesLoading());
+    //emit(const LocalScenesLoading());
     final createdataState = await createSceneUseCase(event.scene);
 
     if (createdataState is DataSuccess) {
