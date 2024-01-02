@@ -41,7 +41,7 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
   bool _ambient = false;
 
   //Volumen
-  int _volume = 50;
+  int _volume = 100;
 
   @override
   void initState() {
@@ -67,7 +67,9 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
           child: Column(
             children: [
               Text(
-                'Agregar anotacion de musica',
+                widget.annotation == null
+                    ? 'Agregar anotacion de audio'
+                    : 'Editar anotacion de audio',
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 20),
@@ -156,11 +158,11 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
                 icon: const Icon(Icons.music_note),
                 onPressed: () async {
                   //Abrir el filepicker
-                  FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
                           allowMultiple: false,
-                          type: FileType.custom,
-                          allowedExtensions: ['mp3', 'wav', 'ogg', 'aac'],
+                          type: FileType.audio,
+                          //allowedExtensions: ['mp3', 'wav', 'ogg', 'aac'],
                           dialogTitle: 'Selecciona un archivo de audio');
 
                   if (result != null) {
@@ -175,6 +177,13 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
                 },
                 label: const Text('Seleccionar archivo de audio'),
               ),
+              //Mostrar el nombre del archivo seleccionado
+              if (_url != null)
+                Text(
+                  //Mostrar solo el nombre del archivo
+                  _url!.split('/').last,
+                  overflow: TextOverflow.ellipsis,
+                ),
 
               const SizedBox(height: 20),
 
@@ -243,7 +252,9 @@ class _SongAnnotationFormState extends State<SongAnnotationForm> {
                     Navigator.of(context).pop(annotation);
                   }
                 },
-                child: const Text('Agregar anotacion'),
+                child: widget.annotation == null
+                    ? const Text('Agregar anotacion')
+                    : const Text('Editar anotacion'),
               ),
             ],
           ),

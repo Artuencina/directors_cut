@@ -13,9 +13,11 @@ import 'package:just_audio/just_audio.dart';
 
 class SongAnnotationItem extends StatefulWidget {
   final AnnotationEntity annotation;
+  final AudioPlayer ambientPlayer;
   const SongAnnotationItem({
     Key? key,
     required this.annotation,
+    required this.ambientPlayer,
   }) : super(key: key);
 
   @override
@@ -30,14 +32,8 @@ class _SongAnnotationItemState extends State<SongAnnotationItem> {
     super.initState();
     _audioPlayer = AudioPlayer();
 
-    //Temporalmente vamos a establecer un url
-    final audioSource = LockCachingAudioSource(Uri.parse(
-        "https://archive.org/download/IGM-V7/IGM%20-%20Vol.%207/25%20Diablo%20-%20Tristram%20%28Blizzard%29.mp3"));
-    _audioPlayer.setAudioSource(audioSource).catchError((error) {
-      return error;
-    });
-
-    audioSource.clearCache();
+    //Cargar el archivo de audio
+    _audioPlayer.setAudioSource(AudioSource.file(widget.annotation.url!));
   }
 
   @override
@@ -49,11 +45,10 @@ class _SongAnnotationItemState extends State<SongAnnotationItem> {
   //Botones de play/pause y stop
   Widget _playerButton(PlayerState playerState, Color iconColor) {
     final proccesingState = playerState.processingState;
-    print(proccesingState);
 
     //Cambiar de estado segun el estado del reproductor
     //Si esta cargando, mostrar un icono de cargando
-    if (_audioPlayer.processingState == ProcessingState.loading ||
+    if (proccesingState == ProcessingState.loading ||
         _audioPlayer.processingState == ProcessingState.buffering) {
       return const CircularProgressIndicator();
     }
@@ -74,6 +69,7 @@ class _SongAnnotationItemState extends State<SongAnnotationItem> {
     } else {
       return IconButton(
           onPressed: () {
+            //El reproductor que se pausa es el de ambiente o el personal de efecta
             _audioPlayer.pause();
           },
           icon: Icon(Icons.pause, color: iconColor));
@@ -208,6 +204,13 @@ class _SongAnnotationItemState extends State<SongAnnotationItem> {
                       context
                           .read<AnnotationBloc>()
                           .add(UpdateAnnotationEvent(annotation: annotation));
+
+                      setState(() {
+                        //Cambiar el audio source del reproductor
+                        _audioPlayer.stop();
+                        _audioPlayer
+                            .setAudioSource(AudioSource.file(annotation.url!));
+                      });
                     }
                   });
                 } else if (value == 'eliminar') {

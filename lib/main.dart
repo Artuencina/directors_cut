@@ -6,13 +6,13 @@ import 'package:directors_cut/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart';
 
 //Temas
 final temaClaro = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.indigo,
+      seedColor: Colors.amber,
       brightness: Brightness.light,
     ),
     appBarTheme: const AppBarTheme(
@@ -34,7 +34,7 @@ void main() async {
   //Ensure initialized
   WidgetsFlutterBinding.ensureInitialized();
   //Drop database for testing
-  //deleteDatabase('app_database.db');
+  deleteDatabase('app_database.db');
   await initializeDependencies();
 
   runApp(

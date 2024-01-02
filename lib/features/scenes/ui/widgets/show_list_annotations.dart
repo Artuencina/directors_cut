@@ -12,6 +12,7 @@ import 'package:directors_cut/features/scenes/ui/widgets/song_annotation_form.da
 import 'package:directors_cut/features/scenes/ui/widgets/song_annotation_item.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/text_annotation_form.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AnnotationList extends StatefulWidget {
@@ -24,6 +25,12 @@ class AnnotationList extends StatefulWidget {
 class _AnnotationListState extends State<AnnotationList> {
   //Lista temporal para editar
   List<AnnotationEntity> annotations = [];
+
+  //Utilizamos un player que le vamos a pasar como argumento
+  //A los items de anotaciones que sean del tipo ambient
+  //Para que utilicen el mismo player
+  final AudioPlayer ambientPlayer = AudioPlayer();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AnnotationBloc, AnnotationState>(
@@ -66,6 +73,7 @@ class _AnnotationListState extends State<AnnotationList> {
                   ? SongAnnotationItem(
                       key: ValueKey(annotation.id),
                       annotation: annotation,
+                      ambientPlayer: ambientPlayer,
                     )
                   : AnnotationItem(
                       key: ValueKey(annotation.id), annotation: annotation);

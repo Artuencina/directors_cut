@@ -21,7 +21,6 @@ class AudioPlayerScreen extends StatelessWidget {
   //Botones de play/pause y stop
   Widget _playerButton(PlayerState playerState, Color iconColor) {
     final proccesingState = playerState.processingState;
-    print(proccesingState);
 
     //Cambiar de estado segun el estado del reproductor
     //Si esta cargando, mostrar un icono de cargando
@@ -95,7 +94,7 @@ class AudioPlayerScreen extends StatelessWidget {
                     //TODO: Fade in y fade out
                   },
                   icon: const Icon(
-                    Icons.music_off_outlined,
+                    Icons.shuffle,
                     color: Colors.black,
                     size: 40,
                   )),
@@ -122,7 +121,7 @@ class AudioPlayerScreen extends StatelessWidget {
                               size: 40,
                             )
                           : const Icon(
-                              Icons.arrow_forward,
+                              Icons.keyboard_tab,
                               color: Colors.black,
                               size: 40,
                             ));
@@ -158,7 +157,7 @@ class AudioPlayerScreen extends StatelessWidget {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ListTile(
+                            const ListTile(
                               title: Text(
                                 'Volumen',
                                 textAlign: TextAlign.center,
@@ -224,10 +223,14 @@ class AudioPlayerScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '00:00',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                StreamBuilder(
+                    stream: _audioPlayer.positionStream,
+                    builder: (context, snapshot) {
+                      return Text(
+                        '${_audioPlayer.position.inMinutes}:${(_audioPlayer.position.inSeconds % 60).toString().padLeft(2, '0')}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      );
+                    }),
                 Text(
                   '${_audioPlayer.duration!.inMinutes}:${(_audioPlayer.duration!.inSeconds % 60).toString().padLeft(2, '0')}',
                   style: Theme.of(context).textTheme.bodyLarge,
