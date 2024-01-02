@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SceneNavigator extends StatefulWidget {
-  const SceneNavigator({super.key});
+  const SceneNavigator({super.key, this.pageController});
 
+  //El controller es para la animacion del paginador
+  final PageController? pageController;
   @override
   State<SceneNavigator> createState() => _SceneNavigatorState();
 }
@@ -41,21 +43,34 @@ class _SceneNavigatorState extends State<SceneNavigator> {
                         IconButton(
                           onPressed: state.scene!.orderId > 1
                               ? () {
-                                  //Buscar la escena anterior
-                                  //Y cambiar la escena actual
-                                  final scene = context
-                                      .read<LocalScenesBloc>()
-                                      .state
-                                      .scenes!
-                                      .firstWhere((element) =>
-                                          element.orderId ==
-                                          state.scene!.orderId - 1);
+                                  // //Buscar la escena anterior
+                                  // //Y cambiar la escena actual
+                                  // final scene = context
+                                  //     .read<LocalScenesBloc>()
+                                  //     .state
+                                  //     .scenes!
+                                  //     .firstWhere((element) =>
+                                  //         element.orderId ==
+                                  //         state.scene!.orderId - 1);
 
+                                  // context.read<CurrentSceneBloc>().add(
+                                  //       ChangeCurrentSceneEvent(
+                                  //         scene: scene,
+                                  //       ),
+                                  //     );
                                   context.read<CurrentSceneBloc>().add(
-                                        ChangeCurrentSceneEvent(
-                                          scene: scene,
+                                        PreviousSceneEvent(
+                                          context
+                                              .read<LocalScenesBloc>()
+                                              .state
+                                              .scenes!,
                                         ),
                                       );
+
+                                  //Mover el paginador a la escena anterior
+                                  // widget.pageController!.previousPage(
+                                  //     duration: const Duration(seconds: 1),
+                                  //     curve: Curves.decelerate);
                                 }
                               : null,
                           icon: const Icon(Icons.arrow_back_ios),
@@ -81,17 +96,26 @@ class _SceneNavigatorState extends State<SceneNavigator> {
                               ? () {
                                   //Buscar la escena siguiente y cambiar la actual
 
-                                  final scene = context
-                                      .read<LocalScenesBloc>()
-                                      .state
-                                      .scenes!
-                                      .firstWhere((element) =>
-                                          element.orderId ==
-                                          state.scene!.orderId + 1);
+                                  // final scene = context
+                                  //     .read<LocalScenesBloc>()
+                                  //     .state
+                                  //     .scenes!
+                                  //     .firstWhere((element) =>
+                                  //         element.orderId ==
+                                  //         state.scene!.orderId + 1);
+
+                                  // context.read<CurrentSceneBloc>().add(
+                                  //       ChangeCurrentSceneEvent(
+                                  //         scene: scene,
+                                  //       ),
+                                  //     );
 
                                   context.read<CurrentSceneBloc>().add(
-                                        ChangeCurrentSceneEvent(
-                                          scene: scene,
+                                        NextSceneEvent(
+                                          context
+                                              .read<LocalScenesBloc>()
+                                              .state
+                                              .scenes!,
                                         ),
                                       );
                                 }

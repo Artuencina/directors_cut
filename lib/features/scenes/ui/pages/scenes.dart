@@ -20,10 +20,17 @@ import 'package:directors_cut/features/scenes/ui/widgets/show_list_scenes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SceneSceen extends StatelessWidget {
+class SceneSceen extends StatefulWidget {
   const SceneSceen({super.key, required this.idProyecto});
 
   final int? idProyecto;
+
+  @override
+  State<SceneSceen> createState() => _SceneSceenState();
+}
+
+class _SceneSceenState extends State<SceneSceen> {
+  //final pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +39,11 @@ class SceneSceen extends StatelessWidget {
         .read<LocalProjectsBloc>()
         .state
         .projects
-        ?.firstWhere((element) => element.id == idProyecto)
+        ?.firstWhere((element) => element.id == widget.idProyecto)
         .name;
 
     return Scaffold(
-      appBar: _buildAppBar(context, tituloProyecto, idProyecto),
+      appBar: _buildAppBar(context, tituloProyecto, widget.idProyecto),
       body: BlocBuilder<LocalScenesBloc, LocalSceneState>(builder: (_, state) {
         if (state is LocalScenesLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -77,7 +84,23 @@ class SceneSceen extends StatelessWidget {
                     SceneNavigator(),
                     Expanded(
                       child: AnnotationList(),
-                    )
+                    ),
+                    // Expanded(
+                    //   child: PageView.builder(
+                    //       itemCount: state.scenes!.length,
+                    //       controller: pageController,
+                    //       onPageChanged: (index) {
+                    //         //Cambiar la escena actual
+                    //         context.read<CurrentSceneBloc>().add(
+                    //               ChangeCurrentSceneEvent(
+                    //                 scene: state.scenes![index],
+                    //               ),
+                    //             );
+                    //       },
+                    //       itemBuilder: (context, index) {
+                    //         return const AnnotationList();
+                    //       }),
+                    // )
                   ],
                 );
         }

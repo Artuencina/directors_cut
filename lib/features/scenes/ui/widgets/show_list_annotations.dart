@@ -6,6 +6,7 @@
 import 'package:directors_cut/features/scenes/domain/entities/annotation_entity.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/annotations/local/bloc/annotation_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
+import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_state.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/annotation_item.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/lighting_annotation_form.dart';
 import 'package:directors_cut/features/scenes/ui/widgets/song_annotation_form.dart';
@@ -33,164 +34,177 @@ class _AnnotationListState extends State<AnnotationList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AnnotationBloc, AnnotationState>(
-      builder: (context, state) {
-        //Cargando
-        if (state is AnnotationLoading) {
-          return const Center(child: CircularProgressIndicator());
+    return BlocListener<CurrentSceneBloc, CurrentSceneState>(
+      listener: (context, state) {
+        //Si la escena no es null, obtener las anotaciones
+        if (state.scene != null) {
+          context
+              .read<AnnotationBloc>()
+              .add(GetAnnotationsEvent(sceneId: state.scene!.id!));
         }
-
-        //Error
-        if (state is AnnotationError) {
-          return Center(
-            child: Text(state.error.toString()),
-          );
-        }
-
-        //Lista de anotaciones
-        if (state is AnnotationDone) {
-          //Preguntar si el boton de editar esta activo
-
-          return ReorderableListView.builder(
-            onReorder: (oldIndex, newIndex) {
-              //Utilidad
-              if (newIndex > state.annotations!.length) {
-                newIndex = state.annotations!.length;
-              }
-              if (oldIndex < newIndex) newIndex--;
-
-              //Pasar los indices al bloc de anotaciones
-              //Con el evento de reordenar
-              context.read<AnnotationBloc>().add(ReorderAnnotationsEvent(
-                  annotations: state.annotations!,
-                  oldIndex: oldIndex,
-                  newIndex: newIndex));
-            },
-            itemCount: state.annotations!.length,
-            itemBuilder: (context, index) {
-              final annotation = state.annotations![index];
-              return annotation.type == 'music'
-                  ? SongAnnotationItem(
-                      key: ValueKey(annotation.id),
-                      annotation: annotation,
-                      ambientPlayer: ambientPlayer,
-                    )
-                  : AnnotationItem(
-                      key: ValueKey(annotation.id), annotation: annotation);
-            },
-            footer: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    //Obtener la escena actual del bloc
-                    final scene =
-                        BlocProvider.of<CurrentSceneBloc>(context).state.scene;
-                    showModalBottomSheet(
-                        context: context,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          //Si la escena actual es null, no se puede agregar anotacion
-                          if (scene == null) {
-                            return const Center(
-                              child: Text('No hay escena seleccionada'),
-                            );
-                          }
-                          return TextAnnotationForm(sceneId: scene.id!);
-                        }).then((value) {
-                      if (value != null) {
-                        AnnotationEntity annotation = value as AnnotationEntity;
-
-                        //Agregar el orderId al valor de la anotacion
-                        annotation.orderId = state.annotations!.length + 1;
-
-                        //Agregar la anotacion al bloc
-                        context
-                            .read<AnnotationBloc>()
-                            .add(CreateAnnotationEvent(annotation: annotation));
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.text_fields),
-                ),
-                IconButton(
-                  onPressed: () {
-                    //Obtener la escena actual del bloc
-                    final scene =
-                        BlocProvider.of<CurrentSceneBloc>(context).state.scene;
-                    showModalBottomSheet(
-                        context: context,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          //Si la escena actual es null, no se puede agregar anotacion
-                          if (scene == null) {
-                            return const Center(
-                              child: Text('No hay escena seleccionada'),
-                            );
-                          }
-
-                          return SongAnnotationForm(sceneId: scene.id!);
-                        }).then((value) {
-                      if (value != null) {
-                        AnnotationEntity annotation = value as AnnotationEntity;
-
-                        //Agregar el orderId al valor de la anotacion
-                        annotation.orderId = state.annotations!.length + 1;
-
-                        //Agregar la anotacion al bloc
-                        context
-                            .read<AnnotationBloc>()
-                            .add(CreateAnnotationEvent(annotation: annotation));
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.music_note),
-                ),
-                IconButton(
-                  onPressed: () {
-                    //Obtener la escena actual del bloc
-                    final scene =
-                        BlocProvider.of<CurrentSceneBloc>(context).state.scene;
-                    showModalBottomSheet(
-                        context: context,
-                        useSafeArea: true,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          //Si la escena actual es null, no se puede agregar anotacion
-                          if (scene == null) {
-                            return const Center(
-                              child: Text('No hay escena seleccionada'),
-                            );
-                          }
-
-                          return LightingAnnotationForm(sceneId: scene.id!);
-                        }).then((value) {
-                      if (value != null) {
-                        //Agregar el orderId al valor de la anotacion
-                        AnnotationEntity annotation = value as AnnotationEntity;
-
-                        annotation.orderId = state.annotations!.length + 1;
-
-                        //Agregar la anotacion al bloc
-                        context
-                            .read<AnnotationBloc>()
-                            .add(CreateAnnotationEvent(annotation: annotation));
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.lightbulb),
-                ),
-              ],
-            ),
-            //En el footer, mostrar tres botones para agregar anotaciones
-            //De texto, musica e iluminacion
-          );
-        }
-
-        return const Center(child: CircularProgressIndicator());
       },
+      child: BlocBuilder<AnnotationBloc, AnnotationState>(
+        builder: (context, state) {
+          //Cargando
+          if (state is AnnotationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          //Error
+          if (state is AnnotationError) {
+            return Center(
+              child: Text(state.error.toString()),
+            );
+          }
+
+          //Lista de anotaciones
+          if (state is AnnotationDone) {
+            //Preguntar si el boton de editar esta activo
+
+            return ReorderableListView.builder(
+              onReorder: (oldIndex, newIndex) {
+                //Utilidad
+                if (newIndex > state.annotations!.length) {
+                  newIndex = state.annotations!.length;
+                }
+                if (oldIndex < newIndex) newIndex--;
+
+                //Pasar los indices al bloc de anotaciones
+                //Con el evento de reordenar
+                context.read<AnnotationBloc>().add(ReorderAnnotationsEvent(
+                    annotations: state.annotations!,
+                    oldIndex: oldIndex,
+                    newIndex: newIndex));
+              },
+              itemCount: state.annotations!.length,
+              itemBuilder: (context, index) {
+                final annotation = state.annotations![index];
+                return annotation.type == 'music'
+                    ? SongAnnotationItem(
+                        key: ValueKey(annotation.id),
+                        annotation: annotation,
+                        ambientPlayer: ambientPlayer,
+                      )
+                    : AnnotationItem(
+                        key: ValueKey(annotation.id), annotation: annotation);
+              },
+              footer: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      //Obtener la escena actual del bloc
+                      final scene = BlocProvider.of<CurrentSceneBloc>(context)
+                          .state
+                          .scene;
+                      showModalBottomSheet(
+                          context: context,
+                          useSafeArea: true,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            //Si la escena actual es null, no se puede agregar anotacion
+                            if (scene == null) {
+                              return const Center(
+                                child: Text('No hay escena seleccionada'),
+                              );
+                            }
+                            return TextAnnotationForm(sceneId: scene.id!);
+                          }).then((value) {
+                        if (value != null) {
+                          AnnotationEntity annotation =
+                              value as AnnotationEntity;
+
+                          //Agregar el orderId al valor de la anotacion
+                          annotation.orderId = state.annotations!.length + 1;
+
+                          //Agregar la anotacion al bloc
+                          context.read<AnnotationBloc>().add(
+                              CreateAnnotationEvent(annotation: annotation));
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.text_fields),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      //Obtener la escena actual del bloc
+                      final scene = BlocProvider.of<CurrentSceneBloc>(context)
+                          .state
+                          .scene;
+                      showModalBottomSheet(
+                          context: context,
+                          useSafeArea: true,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            //Si la escena actual es null, no se puede agregar anotacion
+                            if (scene == null) {
+                              return const Center(
+                                child: Text('No hay escena seleccionada'),
+                              );
+                            }
+
+                            return SongAnnotationForm(sceneId: scene.id!);
+                          }).then((value) {
+                        if (value != null) {
+                          AnnotationEntity annotation =
+                              value as AnnotationEntity;
+
+                          //Agregar el orderId al valor de la anotacion
+                          annotation.orderId = state.annotations!.length + 1;
+
+                          //Agregar la anotacion al bloc
+                          context.read<AnnotationBloc>().add(
+                              CreateAnnotationEvent(annotation: annotation));
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.music_note),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      //Obtener la escena actual del bloc
+                      final scene = BlocProvider.of<CurrentSceneBloc>(context)
+                          .state
+                          .scene;
+                      showModalBottomSheet(
+                          context: context,
+                          useSafeArea: true,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            //Si la escena actual es null, no se puede agregar anotacion
+                            if (scene == null) {
+                              return const Center(
+                                child: Text('No hay escena seleccionada'),
+                              );
+                            }
+
+                            return LightingAnnotationForm(sceneId: scene.id!);
+                          }).then((value) {
+                        if (value != null) {
+                          //Agregar el orderId al valor de la anotacion
+                          AnnotationEntity annotation =
+                              value as AnnotationEntity;
+
+                          annotation.orderId = state.annotations!.length + 1;
+
+                          //Agregar la anotacion al bloc
+                          context.read<AnnotationBloc>().add(
+                              CreateAnnotationEvent(annotation: annotation));
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.lightbulb),
+                  ),
+                ],
+              ),
+              //En el footer, mostrar tres botones para agregar anotaciones
+              //De texto, musica e iluminacion
+            );
+          }
+
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 }

@@ -150,6 +150,8 @@ class CurrentSceneBloc extends Bloc<CurrentSceneEvent, CurrentSceneState> {
   CurrentSceneBloc() : super(const CurrentSceneNone()) {
     on<ChangeCurrentSceneEvent>(onChangeCurrentScene);
     on<EmptyCurrentSceneEvent>(onEmptyCurrentScene);
+    on<NextSceneEvent>(onNextScene);
+    on<PreviousSceneEvent>(onPreviousScene);
   }
 
   void onEmptyCurrentScene(
@@ -164,5 +166,31 @@ class CurrentSceneBloc extends Bloc<CurrentSceneEvent, CurrentSceneState> {
     Emitter<CurrentSceneState> emit,
   ) async {
     emit(CurrentSceneDone(scene: event.scene));
+  }
+
+  void onNextScene(
+    NextSceneEvent event,
+    Emitter<CurrentSceneState> emit,
+  ) async {
+    final scene = event.scenes.firstWhere(
+      (element) => element.orderId == state.scene!.orderId + 1,
+      orElse: () => event.scenes.first,
+    );
+
+    emit(CurrentSceneDone(scene: scene));
+  }
+
+  void onPreviousScene(
+    PreviousSceneEvent event,
+    Emitter<CurrentSceneState> emit,
+  ) async {
+    //Buscar la escena anterior
+
+    final scene = event.scenes.firstWhere(
+      (element) => element.orderId == state.scene!.orderId - 1,
+      orElse: () => event.scenes.last,
+    );
+
+    emit(CurrentSceneDone(scene: scene));
   }
 }
