@@ -13,6 +13,7 @@ import 'package:floor/floor.dart';
       childColumns: ['projectId'],
       parentColumns: ['id'],
       entity: ProjectEntity,
+      onDelete: ForeignKeyAction.cascade,
     )
   ],
 )

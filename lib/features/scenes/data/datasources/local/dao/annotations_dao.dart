@@ -21,4 +21,7 @@ abstract class AnnotationDao {
 
   @delete
   Future<void> deleteAnnotation(AnnotationEntity annotation);
+
+  @Query('DELETE FROM $annotationsTable WHERE sceneId = :sceneId')
+  Future<void> deleteAllAnnotations(int sceneId);
 }

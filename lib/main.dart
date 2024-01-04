@@ -1,12 +1,15 @@
 import 'package:directors_cut/config/router/app_router.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/bloc/projects/local/local_project_event.dart';
+import 'package:directors_cut/features/scenes/ui/bloc/scenes/local/bloc/local_scene_bloc.dart';
 import 'package:directors_cut/features/scenes/ui/pages/projects.dart';
 import 'package:directors_cut/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'features/scenes/ui/bloc/annotations/local/bloc/annotation_bloc.dart';
 
 //Temas
 final temaClaro = ThemeData(
@@ -43,6 +46,12 @@ void main() async {
         BlocProvider<LocalProjectsBloc>(
           create: (context) => sl()..add(const GetProjectsEvent()),
         ),
+        BlocProvider<LocalScenesBloc>(
+          create: (context) => sl(),
+        ),
+        BlocProvider<AnnotationBloc>(
+          create: (context) => sl(),
+        )
       ],
       child: MaterialApp.router(
         title: 'Directors Cut',

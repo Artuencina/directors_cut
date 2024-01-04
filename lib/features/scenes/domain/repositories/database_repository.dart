@@ -28,4 +28,5 @@ abstract class DatabaseRepository {
   Future<DataState<void>> updateAnnotation(AnnotationEntity annotation);
   Future<DataState<void>> updateAnnotations(List<AnnotationEntity> annotations);
   Future<DataState<void>> deleteAnnotation(AnnotationEntity annotation);
+  Future<DataState<void>> deleteAllAnnotations(int sceneId);
 }

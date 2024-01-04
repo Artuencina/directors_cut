@@ -16,6 +16,8 @@ abstract class ProjectDao {
   @update
   Future<void> updateProject(ProjectEntity project);
 
+  //Query para eliminar un proyecto
+  //Elimina las anotaciones, luego las escenas y finalmente el proyecto
   @delete
   Future<void> deleteProject(ProjectEntity project);
 }

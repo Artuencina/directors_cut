@@ -31,6 +31,7 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
     on<DeleteAnnotationEvent>(onDeleteAnnotation);
     on<UpdateAnnotationsEvent>(onUpdateAnnotations);
     on<ReorderAnnotationsEvent>(onReorderAnnotations);
+    on<DeleteAllAnnotationsEvent>(onDeleteAllAnnotations);
     on<GetAnnotationsEvent>(onGetAnnotations);
     on<ClearAnnotationsEvent>(onClearAnnotations);
   }
@@ -81,6 +82,35 @@ class AnnotationBloc extends Bloc<AnnotationEvent, AnnotationState> {
     if (dataState is DataSuccess) {
       //Si se elimina una anotacion volvemos a obtener las anotaciones
       final dataState = await getAnnotationsUseCase(event.annotation.sceneId!);
+
+      //Antes de emitir el estado, vamos a actualizar el orderId de las anotaciones
+      //para que no haya huecos en el orden
+      final annotations = dataState.data!;
+      for (var i = 0; i < annotations.length; i++) {
+        annotations[i].orderId = i + 1;
+      }
+
+      //Actualizamos las anotaciones
+      await updateAnnotationsUseCase(annotations);
+
+      emit(AnnotationDone(annotations: dataState.data!));
+    }
+
+    //Si falla, emitimos el estado de error
+    if (dataState is DataFailed) {
+      emit(AnnotationError(error: dataState.error!));
+    }
+  }
+
+  //Evento de eliminar todas las anotaciones de una escena
+  void onDeleteAllAnnotations(
+      DeleteAllAnnotationsEvent event, Emitter<AnnotationState> emit) async {
+    //emit(const AnnotationLoading());
+    final dataState = await repository.deleteAllAnnotations(event.sceneId);
+
+    if (dataState is DataSuccess) {
+      //Si se elimina una anotacion volvemos a obtener las anotaciones
+      final dataState = await getAnnotationsUseCase(event.sceneId);
 
       //Antes de emitir el estado, vamos a actualizar el orderId de las anotaciones
       //para que no haya huecos en el orden

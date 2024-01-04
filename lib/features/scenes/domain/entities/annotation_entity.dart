@@ -14,6 +14,7 @@ import 'package:equatable/equatable.dart';
       childColumns: ['sceneId'],
       parentColumns: ['id'],
       entity: SceneEntity,
+      onDelete: ForeignKeyAction.cascade,
     )
   ],
 )

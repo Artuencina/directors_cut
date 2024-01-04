@@ -47,6 +47,12 @@ class DeleteAnnotationEvent extends AnnotationEvent {
   final AnnotationEntity annotation;
 }
 
+//Evento de eliminar todas las anotaciones de una escena
+class DeleteAllAnnotationsEvent extends AnnotationEvent {
+  const DeleteAllAnnotationsEvent({required this.sceneId});
+  final int sceneId;
+}
+
 //Evento de cambiar anotaciones
 class ChangeAnnotationsEvent extends AnnotationEvent {
   const ChangeAnnotationsEvent({required this.sceneId});

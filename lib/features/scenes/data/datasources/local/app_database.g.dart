@@ -91,9 +91,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `projects` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `description` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `scenes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `projectId` INTEGER, `name` TEXT NOT NULL, `orderId` INTEGER NOT NULL, FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `scenes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `projectId` INTEGER, `name` TEXT NOT NULL, `orderId` INTEGER NOT NULL, FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `annotations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sceneId` INTEGER, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `orderId` INTEGER NOT NULL, `color` TEXT, `url` TEXT, `songStart` INTEGER, `songEnd` INTEGER, `type` TEXT NOT NULL, `playType` TEXT, `soundType` TEXT, `volume` INTEGER, FOREIGN KEY (`sceneId`) REFERENCES `scenes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `annotations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `sceneId` INTEGER, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `type` TEXT NOT NULL, `orderId` INTEGER, `color` TEXT, `url` TEXT, `songStart` INTEGER, `songEnd` INTEGER, `playType` TEXT, `soundType` TEXT, `volume` INTEGER, FOREIGN KEY (`sceneId`) REFERENCES `scenes` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -301,12 +301,12 @@ class _$AnnotationDao extends AnnotationDao {
                   'sceneId': item.sceneId,
                   'title': item.title,
                   'description': item.description,
+                  'type': item.type,
                   'orderId': item.orderId,
                   'color': item.color,
                   'url': item.url,
                   'songStart': item.songStart,
                   'songEnd': item.songEnd,
-                  'type': item.type,
                   'playType': item.playType,
                   'soundType': item.soundType,
                   'volume': item.volume
@@ -320,12 +320,12 @@ class _$AnnotationDao extends AnnotationDao {
                   'sceneId': item.sceneId,
                   'title': item.title,
                   'description': item.description,
+                  'type': item.type,
                   'orderId': item.orderId,
                   'color': item.color,
                   'url': item.url,
                   'songStart': item.songStart,
                   'songEnd': item.songEnd,
-                  'type': item.type,
                   'playType': item.playType,
                   'soundType': item.soundType,
                   'volume': item.volume
@@ -339,12 +339,12 @@ class _$AnnotationDao extends AnnotationDao {
                   'sceneId': item.sceneId,
                   'title': item.title,
                   'description': item.description,
+                  'type': item.type,
                   'orderId': item.orderId,
                   'color': item.color,
                   'url': item.url,
                   'songStart': item.songStart,
                   'songEnd': item.songEnd,
-                  'type': item.type,
                   'playType': item.playType,
                   'soundType': item.soundType,
                   'volume': item.volume
@@ -371,7 +371,7 @@ class _$AnnotationDao extends AnnotationDao {
             sceneId: row['sceneId'] as int?,
             title: row['title'] as String,
             description: row['description'] as String,
-            orderId: row['orderId'] as int,
+            orderId: row['orderId'] as int?,
             color: row['color'] as String?,
             url: row['url'] as String?,
             songStart: row['songStart'] as int?,
@@ -391,7 +391,7 @@ class _$AnnotationDao extends AnnotationDao {
             sceneId: row['sceneId'] as int?,
             title: row['title'] as String,
             description: row['description'] as String,
-            orderId: row['orderId'] as int,
+            orderId: row['orderId'] as int?,
             color: row['color'] as String?,
             url: row['url'] as String?,
             songStart: row['songStart'] as int?,
@@ -401,6 +401,13 @@ class _$AnnotationDao extends AnnotationDao {
             soundType: row['soundType'] as String?,
             volume: row['volume'] as int?),
         arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteAllAnnotations(int sceneId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM annotations WHERE sceneId = ?1',
+        arguments: [sceneId]);
   }
 
   @override

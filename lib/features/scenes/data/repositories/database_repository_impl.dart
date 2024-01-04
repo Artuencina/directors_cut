@@ -147,6 +147,16 @@ class DatabaseRepositoryImpl implements DatabaseRepository {
   }
 
   @override
+  Future<DataState<void>> deleteAllAnnotations(int sceneId) async {
+    try {
+      await _database.annotationDao.deleteAllAnnotations(sceneId);
+      return const DataSuccess<void>(null);
+    } catch (e) {
+      return DataFailed<void>(e as Exception);
+    }
+  }
+
+  @override
   Future<DataState<AnnotationEntity?>> getAnnotation(int id) async {
     try {
       final annotation = await _database.annotationDao.getAnnotation(id);
