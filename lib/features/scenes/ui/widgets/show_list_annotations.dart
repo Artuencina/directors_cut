@@ -59,8 +59,6 @@ class _AnnotationListState extends State<AnnotationList> {
 
           //Lista de anotaciones
           if (state is AnnotationDone) {
-            //Preguntar si el boton de editar esta activo
-
             return ReorderableListView.builder(
               onReorder: (oldIndex, newIndex) {
                 //Utilidad
@@ -83,7 +81,6 @@ class _AnnotationListState extends State<AnnotationList> {
                     ? SongAnnotationItem(
                         key: ValueKey(annotation.id),
                         annotation: annotation,
-                        ambientPlayer: ambientPlayer,
                       )
                     : AnnotationItem(
                         key: ValueKey(annotation.id), annotation: annotation);

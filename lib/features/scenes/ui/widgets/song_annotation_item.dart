@@ -13,11 +13,9 @@ import 'package:just_audio/just_audio.dart';
 
 class SongAnnotationItem extends StatefulWidget {
   final AnnotationEntity annotation;
-  final AudioPlayer ambientPlayer;
   const SongAnnotationItem({
     Key? key,
     required this.annotation,
-    required this.ambientPlayer,
   }) : super(key: key);
 
   @override
