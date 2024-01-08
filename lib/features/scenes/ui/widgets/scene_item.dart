@@ -27,6 +27,15 @@ class SceneItem extends StatelessWidget {
       elevation: 5,
       child: ListTile(
         key: ValueKey(scene.id),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            //Eliminar la escena
+            context.read<LocalScenesBloc>().add(
+                  DeleteSceneEvent(scene: scene),
+                );
+          },
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
         leading: isEdit
             ? ReorderableDragStartListener(
@@ -79,44 +88,56 @@ class SceneItem extends StatelessWidget {
             },
           );
         },
-        onLongPress: () {
-          //Mostrar opciones de eliminar, agregar escena antes y despues
-          if (isEdit) return;
-          showModalBottomSheet(
-            context: context,
-            builder: (_) {
-              return Wrap(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.subdirectory_arrow_left),
-                    title: const Text('Agregar escena antes'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.subdirectory_arrow_right),
-                    title: const Text('Agregar escena despues'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.delete),
-                    title: const Text('Eliminar'),
-                    onTap: () {
-                      //Eliminar la escena
-                      context.read<LocalScenesBloc>().add(
-                            DeleteSceneEvent(scene: scene),
-                          );
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
+        // onLongPress: () {
+        //   //Mostrar opciones de eliminar, agregar escena antes y despues
+        //   if (isEdit) return;
+        //   showModalBottomSheet(
+        //     context: context,
+        //     builder: (_) {
+        //       return Wrap(
+        //         children: [
+        //           ListTile(
+        //             leading: const Icon(Icons.subdirectory_arrow_left),
+        //             title: const Text('Agregar escena antes'),
+        //             onTap: () {
+        //               Navigator.pop(context);
+        //             },
+        //           ),
+        //           ListTile(
+        //             leading: const Icon(Icons.subdirectory_arrow_right),
+        //             title: const Text('Agregar escena despues'),
+        //             onTap: () {
+        //               //Agregar escena con orderId + 1 del actual
+        //               //y luego actualizar el orden de las escenas
+        //               final newScene = SceneEntity(
+        //                 name: '',
+        //                 projectId: scene.projectId,
+        //                 orderId: scene.orderId + 1,
+        //               );
+
+        //               context.read<LocalScenesBloc>().add(
+        //                     CreateSceneEvent(scene: newScene),
+        //                   );
+
+        //               Navigator.pop(context);
+        //             },
+        //           ),
+        //           ListTile(
+        //             leading: const Icon(Icons.delete),
+        //             title: const Text('Eliminar'),
+        //             onTap: () {
+        //               //Eliminar la escena
+        //               context.read<LocalScenesBloc>().add(
+        //                     DeleteSceneEvent(scene: scene),
+        //                   );
+        //               Navigator.pop(context);
+        //             },
+        //           ),
+        //         ],
+        //       );
+        //     },
+        //   );
+        // },
       ),
     );
   }

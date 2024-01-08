@@ -105,10 +105,7 @@ class _SongAnnotationItemState extends State<SongAnnotationItem> {
               children: [
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      _audioPlayer.stop();
-                      _audioPlayer.seek(Duration.zero);
-                    });
+                    _audioPlayer.stop();
                   },
                   icon: Icon(
                     Icons.stop,

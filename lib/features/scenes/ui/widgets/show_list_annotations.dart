@@ -60,6 +60,7 @@ class _AnnotationListState extends State<AnnotationList> {
           //Lista de anotaciones
           if (state is AnnotationDone) {
             return ReorderableListView.builder(
+              buildDefaultDragHandles: false,
               onReorder: (oldIndex, newIndex) {
                 //Utilidad
                 if (newIndex > state.annotations!.length) {

@@ -57,9 +57,20 @@ class LocalScenesBloc extends Bloc<LocalSceneEvent, LocalSceneState> {
 
     if (createdataState is DataSuccess) {
       //Si se crea la escena, volvemos a obtener las escenas
-
       final dataState =
           await getScenesUseCase(event.scene.projectId.toString());
+
+      //Antes de emitir el estado vamos a actualizar el orden de las escenas
+      //para que no haya huecos en el orden
+      final scenes = dataState.data!;
+
+      for (var i = 0; i < scenes.length; i++) {
+        scenes[i].orderId = i + 1;
+      }
+
+      //Actualizamos las escenas
+      await updateScenesUseCase(scenes);
+
       emit(LocalScenesDone(scenes: dataState.data!));
     }
 

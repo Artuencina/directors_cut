@@ -61,7 +61,7 @@ class _ListScenesScreenState extends State<ListScenesScreen> {
                   //Guardar el orden de las escenas en la lista temporal
                   scenes =
                       context.read<LocalScenesBloc>().state.scenes!.toList();
-              } else {
+                } else {
                   //Actualizar el orden de las escenas si hay al menos una escena
                   if (scenes.isNotEmpty) {
                     //Actualizar el orden de las escenas locales
@@ -108,6 +108,7 @@ class _ListScenesScreenState extends State<ListScenesScreen> {
                       });
                     },
                     itemCount: scenes.length,
+                    buildDefaultDragHandles: false,
                     itemBuilder: (_, index) {
                       return SceneItem(
                         key: ValueKey(scenes[index].id),
